@@ -53,3 +53,28 @@ To run the project, activate the virtual environment and run the main script:
 python -u #path/to/audioFingerprinting.py#
 EXAMPLE: python -u "h:\audio-fingerprint\audioFingerprinting.py"
 
+## Notes 🗒️
+
+- For best results, use audio files in **WAV or MP3 format** with a consistent sample rate.  
+- The SQLite database (`fingerprints.db`) will be generated automatically when running the script.  
+- Activate the virtual environment before running any scripts:  
+  ```bash
+  source venv/bin/activate  # macOS/Linux
+  .\venv\Scripts\activate   # Windows
+Large audio files may take longer to process — please be patient.
+
+Currently, only single-channel audio is fully supported.
+
+File paths with spaces may require quotes, e.g., "C:/path to/audiofile.mp3".
+
+Logs and outputs are printed to the console by default; you can redirect them to a file if needed.
+
+The project is designed to be modular, so additional audio analysis or database features can be added without changing the main workflow.
+
+Keep Python dependencies up to date with:
+
+```bash
+   pip install --upgrade -r requirements.txt
+
+
+It’s recommended to run the project on Python 3.8+, as older versions may have compatibility issues.
