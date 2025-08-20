@@ -29,11 +29,11 @@ if menu == "Add Song":
         uploaded_file = st.file_uploader("Upload a song", type=["mp3", "wav"])
         title = st.text_input("Song Title")
 
-        # Suggest existing artists dynamically
+        
         artist = st.text_input("Artist Name")
 
 
-        # Genre selection
+        
         genre = st.selectbox("Genre", ["Pop", "Rock", "Classical", "Hip-Hop", "Jazz", "Other"])
 
         submitted = st.form_submit_button("Save Song")
@@ -51,11 +51,11 @@ if menu == "Add Song":
         db.add_song(title, artist, genre, file_path, duration)
         st.success(f"✅ {title} by {artist} added successfully!")
     
-        # --- Spectrogram visualization ---
+        # Spectrogram visualization 
         st.markdown("### 🎵 Spectrogram Preview with Detected Peaks")
         freqs, times, peaks = spec_gen.process_file(file_path, visualize=True)
     
-        # --- Spectrogram visualization in Streamlit ---
+        # I added this to visualize the spectrogram in Streamlit
         import matplotlib.pyplot as plt
     
         # Use the spectrogram values instead of raw STFT for proper dimensions
@@ -74,7 +74,7 @@ if menu == "Add Song":
         ax.set_ylabel("Frequency (Hz)")
         ax.set_title(f"Spectrogram for {title}")
         st.pyplot(fig)
-        st.text(f"Detected {len(peaks)} peaks in the spectrogram.")
+        st.write(f"Detected {len(peaks)} peaks in the spectrogram.")
 
 
 
