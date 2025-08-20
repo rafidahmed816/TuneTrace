@@ -88,8 +88,6 @@ class SpectrogramGenerator:
             freq_hz = frequencies[f_idx]
             time_s = times[t_idx]
             print(f"{i+1}: Frequency = {freq_hz:.1f} Hz, Time = {time_s:.3f} s")
-           
-            print(f"Detected {len(peaks)} peaks in the spectrogram.")
         return frequencies, times, peaks
 
 
