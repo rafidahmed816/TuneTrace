@@ -24,11 +24,8 @@ if menu == "Add Song":
         title = st.text_input("Song Title")
 
         # Suggest existing artists dynamically
-        existing_artists = [row[0] for row in db.conn.execute(
-            "SELECT DISTINCT artist FROM songs WHERE artist IS NOT NULL").fetchall()]
-        artist = st.selectbox("Artist", options=existing_artists + ["<New Artist>"])
-        if artist == "<New Artist>":
-            artist = st.text_input("Enter new artist name")
+        artist = st.text_input("Artist Name")
+
 
         # Genre selection
         genre = st.selectbox("Genre", ["Pop", "Rock", "Classical", "Hip-Hop", "Jazz", "Other"])
