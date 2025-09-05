@@ -1,3 +1,5 @@
 streamlit
 librosa
 sounddevice
+cffi>=1.0
+matplotlib

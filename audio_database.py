@@ -1,6 +1,7 @@
 import sqlite3
 import os
 
+
 class AudioDatabase:
     def __init__(self, db_name="songs.db"):
         self.conn = sqlite3.connect(db_name)

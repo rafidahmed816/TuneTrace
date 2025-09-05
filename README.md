@@ -34,7 +34,7 @@ cd TuneTrace
 
 On Windows:
 
-python -m venv venv
+
 .\venv\Scripts\activate
 
 On macOS/Linux:
@@ -78,3 +78,7 @@ Keep Python dependencies up to date with:
 
 
 It’s recommended to run the project on Python 3.8+, as older versions may have compatibility issues.
+
+
+sudo apt-get install libportaudio2
+sudo apt-get install portaudio19-dev
