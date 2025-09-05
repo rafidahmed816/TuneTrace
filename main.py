@@ -4,12 +4,14 @@ from audio_database import AudioDatabase
 from fingerprint_system import FingerprintSystem
 import pandas as pd
 from spectrogram_utils import SpectrogramGenerator
+from microphone_recorder import MicrophoneRecorder
 import numpy as np
 
 # Initialize DB + Systems
 db = AudioDatabase()
 fingerprint_system = FingerprintSystem()
 spec_gen = SpectrogramGenerator()
+recorder = MicrophoneRecorder()
 
 
 SONGS_DIR = "songs"
@@ -114,19 +116,81 @@ elif menu == "Play Song":
 elif menu == "Identify Song":
     st.markdown("### 🎵 Identify Songs from Audio Clips")
     st.info(
-        "Upload a short audio clip to identify which song from the database it matches."
+        "Upload a short audio clip or record audio from your microphone to identify which song from the database it matches."
     )
+    st.markdown("---")
+    st.markdown("### Option 1: Upload Audio File")
 
     uploaded_audio = st.file_uploader(
         "Upload audio clip for identification", type=["mp3", "wav"]
     )
+    st.markdown("---")
+    st.markdown("### Option 2: Record from Microphone")
+    duration = st.slider("Select recording duration (seconds)", 5, 30, 10)
+    if st.button("🎤 Start Recording"):
+        temp_path = os.path.join(SONGS_DIR, "temp_recording.wav")
+        with st.spinner(f"Recording for {duration} seconds..."):
+            recorder.record_audio(duration, temp_path)
+        st.success("Recording finished!")
+        st.audio(temp_path)
+        
+        # Automatically identify the recorded song
+        with st.spinner("Processing audio and identifying song..."):
+            try:
+                matches = fingerprint_system.identify_audio(temp_path)
+                
+                if matches:
+                    st.success("🎉 Song Identified!")
+                    song_info, confidence, match_count = matches[0]
+                    
+                    with st.expander(
+                        f"Match: {song_info['title']} by {song_info['artist'] or 'Unknown'}",
+                        expanded=True,
+                    ):
+                        col_info, col_play = st.columns([2, 1])
+                        
+                        with col_info:
+                            st.write(f"Confidence: {confidence:.2%}")
+                            st.write(f"Matches: {match_count} fingerprint matches")
+                            st.write(f"Duration: {song_info['duration']:.1f} seconds")
+                            
+                            # Show match quality
+                            if confidence > 0.7:
+                                st.success("Excellent match!")
+                            elif confidence > 0.4:
+                                st.warning("Good match")
+                            else:
+                                st.info("Possible match")
+                        
+                        with col_play:
+                            if st.button("Play Matched Song"):
+                                if os.path.exists(song_info["file_path"]):
+                                    fingerprint_system.play_song(song_info["file_path"])
+                                    st.success("Playing song! 🎧")
+                                else:
+                                    st.error("Song file not found")
+                else:
+                    st.warning("No matches found in the database.")
+                    st.info("Try recording a different song or add more songs to the database.")
+                    
+            except Exception as e:
+                st.error(f"Error during identification: {e}")
+        
+        # Clean up the temporary recording file
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
     if uploaded_audio:
-        # Save uploaded audio temporarily
-        temp_path = os.path.join(SONGS_DIR, f"temp_query_{uploaded_audio.name}")
-        with open(temp_path, "wb") as f:
-            f.write(uploaded_audio.getbuffer())
-
+        # Handle both uploaded files and recorded audio
+        if isinstance(uploaded_audio, str):
+            # This is a recorded file path
+            temp_path = uploaded_audio
+        else:
+            # This is an uploaded file object
+            temp_path = os.path.join(SONGS_DIR, f"temp_query_{uploaded_audio.name}")
+            with open(temp_path, "wb") as f:
+                f.write(uploaded_audio.getbuffer())
+                
         col1, col2 = st.columns(2)
 
         with col1:
@@ -180,11 +244,11 @@ elif menu == "Identify Song":
                     except Exception as e:
                         st.error(f"Error during identification: {e}")
 
-                # Clean up temporary file
-                if os.path.exists(temp_path):
+                # Clean up temporary file if it was created from upload
+                if not isinstance(uploaded_audio, str) and os.path.exists(temp_path):
                     os.remove(temp_path)
 
-        with col2:
+        with col2: 
             if st.button("🎧 Preview Query Audio"):
                 fingerprint_system.play_song(temp_path)
                 st.info("Playing your query audio...")
