@@ -1,7 +1,9 @@
-from typing import List, Tuple 
+from typing import List, Tuple
 import hashlib
 import numpy as np
-from spectogramGenerator import SpectrogramGenerator
+from spectrogram_utils import SpectrogramGenerator
+
+
 class FingerprintGenerator:
     """Generates audio fingerprints from constellation points"""
 
@@ -46,8 +48,10 @@ class FingerprintGenerator:
     ) -> List[Tuple[str, int]]:
         """Complete fingerprint generation pipeline"""
         # Generate spectrogram
-        spec_gen = SpectrogramGenerator(sample_rate)
-        frequencies, times, spectrogram = spec_gen.generate_spectrogram(audio_data)
+        spec_gen = SpectrogramGenerator()
+        frequencies, times, spectrogram = spec_gen.generate_spectrogram(
+            audio_data, sample_rate
+        )
 
         # Find peaks
         peaks = spec_gen.find_peaks(spectrogram)
