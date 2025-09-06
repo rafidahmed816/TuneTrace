@@ -3,7 +3,7 @@ import numpy as np
 from scipy.io.wavfile import write
 
 class MicrophoneRecorder:
-    def init(self, sample_rate=44100, channels=1):
+    def __init__(self, sample_rate=44100, channels=1):
         self.sample_rate = sample_rate
         self.channels = channels
 
