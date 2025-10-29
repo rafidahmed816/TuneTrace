@@ -1,7 +1,7 @@
 # audio_processor.py
 import numpy as np
 import librosa
-from typing import Tuple, List  # Ensure List is imported from typing
+from typing import Tuple, List  
 
 class AudioProcessor:
     """Handles audio file loading and preprocessing"""
@@ -25,12 +25,3 @@ class AudioProcessor:
             return audio_data / max_val
         return audio_data
 
-    def apply_window(
-        self, audio_data: np.ndarray, window_size: int = 4096, hop_size: int = 1024
-    ) -> List[np.ndarray]:  # List should now be properly recognized
-        """Apply windowing to audio data"""
-        windows = []
-        for i in range(0, len(audio_data) - window_size, hop_size):
-            window = audio_data[i : i + window_size]
-            windows.append(window * np.hanning(window_size))
-        return windows
